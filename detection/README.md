@@ -163,6 +163,48 @@ PnP 返回旋转和平移，两者都要作用到每个物理角点，得到 `co
 
 不要硬编码这些视频中的检测结果、帧范围、颜色或装甲板尺寸。
 
+## 当前 Python 实现
+
+仓库中的 `preprocess.py`、`decode.py`、`nms.py`、`pose.py` 和 `run_inference.py`
+组成一个 CPU 推理流程。需要 Python 3.10 或更新版本。
+
+在仓库根目录创建并启用虚拟环境，然后安装依赖：
+
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r detection/requirements.txt
+```
+
+分别处理两段视频并输出 JSONL：
+
+```sh
+python detection/run_inference.py \
+  --model detection/assets/0526.onnx \
+  --video detection/assets/small.mp4 \
+  --calibration detection/assets/calibration.yaml \
+  --output small.jsonl
+
+python detection/run_inference.py \
+  --model detection/assets/0526.onnx \
+  --video detection/assets/large.mp4 \
+  --calibration detection/assets/calibration.yaml \
+  --output large.jsonl
+```
+
+预处理采用 640 × 640 居中补边；初始 objectness 阈值和 NMS IoU 阈值均为 0.5。
+图案类别 `1` 和 `base_big` 使用大装甲板尺寸，其余类别使用小装甲板尺寸。
+
+可以把 JSONL 中的角点画回对应视频帧，直观检查检测框和角点顺序：
+
+```sh
+python detection/visualize_jsonl.py \
+  --video detection/assets/small.mp4 \
+  --jsonl small.jsonl \
+  --frame-index 0 \
+  --output small_frame0.png
+```
+
 [model-repo]: https://github.com/broalantaps/RobotDetectionModel
 [inference-reference]: https://github.com/broalantaps/RobotDetectionModel/blob/babaebd6c8b3aeceda0ca924772b2d70d51801b4/OpenvinoInfer.cpp
 [pnp-docs]: https://docs.opencv.org/4.x/d5/d1f/calib3d_solvePnP.html

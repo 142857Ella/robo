@@ -31,6 +31,24 @@ lyf 把 yaw、pitch 云台教具交给了控制组。这次我们假设他们已
 瞄准路线使用 Rust，不需要实现检测器、跟踪器或状态估计。
 两者都允许使用参考资料和 AI 工具，但你需要能够解释自己的实现并定位问题。
 
+## 本仓库选择：检测路线
+
+本仓库完成装甲板检测与位姿估计。依赖安装和详细实现说明见
+[detection/README.md](detection/README.md)，依赖列表见
+[detection/requirements.txt](detection/requirements.txt)。
+
+在仓库根目录激活 `.venv` 后，可用以下命令处理视频并生成 JSONL：
+
+```sh
+python detection/run_inference.py \
+  --model detection/assets/0526.onnx \
+  --video detection/assets/small.mp4 \
+  --calibration detection/assets/calibration.yaml \
+  --output small.jsonl
+```
+
+将 `small.mp4` 和 `small.jsonl` 分别换成 `large.mp4` 和 `large.jsonl`，即可处理另一段视频。
+
 ## 开始与提交
 
 1. 打开[作业模板](https://github.com/HKUAstar/vision-training-assignment)，点击

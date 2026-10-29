@@ -1,5 +1,7 @@
 target
 .DS_Store
+.venv/
+__pycache__/
 *.mcap
 .env
 .env.*
